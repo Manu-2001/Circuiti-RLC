@@ -34,7 +34,7 @@ void SmallRange() {
   Woofer->Draw();
   FitWoofer->Draw("SAME");
 
-  TCanvas* Confronto = new TCanvas("Confronto", "Woofer fit");
+  TCanvas* Confronto = new TCanvas("Confronto", "Sovrapposizione fit");
   FitTweeter->Draw();
   FitWoofer->Draw("SAME");
 
