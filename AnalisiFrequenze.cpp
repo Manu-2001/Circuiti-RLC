@@ -50,6 +50,6 @@ void SmallRange() {
   if (delta >= 0. && a != 0.) {
     double const x1 = -(b + sqrt(delta)) / (2 * a);
     double const x2 = (-b + sqrt(delta)) / (2 * a);
-    std::cout << "\nZERI:\n\tx1 = " << x1 << " Hz\tx2 = " << x2 << " Hz.\n";
+    std::cout << "\nZERI:\n  x1 = " << x1 << " Hz\tx2 = " << x2 << " Hz.\n";
   }
 }
