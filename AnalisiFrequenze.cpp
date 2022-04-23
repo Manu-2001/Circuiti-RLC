@@ -38,17 +38,12 @@ void SmallRange() {
   FitTweeter->Draw();
   FitWoofer->Draw("SAME");
 
-  double const ta = FitTweeter->GetParameter(0);
-  double const tb = FitTweeter->GetParameter(1);
-  double const tc = FitTweeter->GetParameter(2);
+  double const* Tpar = FitTweeter->GetParameters();
+  double const* Wpar = FitWoofer->GetParameters();
 
-  double const wa = FitWoofer->GetParameter(0);
-  double const wb = FitWoofer->GetParameter(1);
-  double const wc = FitWoofer->GetParameter(2);
-
-  double const a = ta - wa;
-  double const b = tb - wb;
-  double const c = tc - wc;
+  double const a = Tpar[0] - Wpar[0];
+  double const b = Tpar[1] - Wpar[1];
+  double const c = Tpar[2] - Wpar[2];
 
   double const delta = b * b - 4 * a * c;
 
