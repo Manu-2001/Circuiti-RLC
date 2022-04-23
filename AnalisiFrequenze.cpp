@@ -9,7 +9,7 @@
 #include "TROOT.h"
 #include "TStyle.h"
 
-// Dati: frequenza range ristretto 3.75 Hz - 4.75 Hz
+// Dati: frequenza range ristretto 3.75 kHz - 4.75 kHz
 // Sorgente: sinusoide di ampiezza 5V, sweep con salti di 10Hz
 // Campionamento: 300 KHz
 // CrossOver trovato: 4055.99 Hz ± /
