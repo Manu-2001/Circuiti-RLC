@@ -47,7 +47,7 @@ void SmallRange() {
 
   double const delta = b * b - 4 * a * c;
 
-  if (delta >= .0 && a != 0.) {
+  if (delta >= 0. && a != 0.) {
     double const x1 = -(b + sqrt(delta)) / (2 * a);
     double const x2 = (-b + sqrt(delta)) / (2 * a);
     std::cout << "\nZERI:\n\tx1 = " << x1 << " Hz\tx2 = " << x2 << " Hz.\n";
