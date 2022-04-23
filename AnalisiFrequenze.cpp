@@ -18,7 +18,7 @@ void SmallRange() {
   TGraph* Tweeter = new TGraph("tweeter.txt", "%lg%lg", "");
   TGraph* Woofer = new TGraph("woofer.txt", "%lg%lg", "");
 
-  TF1* parabola = new TF1("parabola", "[0]*x*x + [1]*x + [2]", 3000, 5000);
+  TF1* parabola = new TF1("parabola", "[0]*x*x + [1]*x + [2]", 3000., 5000.);
 
   Tweeter->Fit("parabola", "R");
   TF1* FitTweeter = Tweeter->GetFunction("parabola");
