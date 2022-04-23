@@ -18,17 +18,17 @@ void SmallRange() {
   TGraph* Tweeter = new TGraph("tweeter.txt", "%lg%lg", "");
   TGraph* Woofer = new TGraph("woofer.txt", "%lg%lg", "");
 
-  TF1* quad = new TF1("quad", "[0]*x*x + [1]*x + [2]", 3000, 5000);
+  TF1* parabola = new TF1("parabola", "[0]*x*x + [1]*x + [2]", 3000, 5000);
 
-  Tweeter->Fit("quad", "R");
-  TF1* FitTweeter = Tweeter->GetFunction("quad");
+  Tweeter->Fit("parabola", "R");
+  TF1* FitTweeter = Tweeter->GetFunction("parabola");
 
   TCanvas* TResult = new TCanvas("TResult", "Tweeter fit");
   Tweeter->Draw();
   FitTweeter->Draw("SAME");
 
-  Woofer->Fit("quad", "R");
-  TF1* FitWoofer = Woofer->GetFunction("quad");
+  Woofer->Fit("parabola", "R");
+  TF1* FitWoofer = Woofer->GetFunction("parabola");
 
   TCanvas* WResult = new TCanvas("WResult", "Woofer fit");
   Woofer->Draw();
