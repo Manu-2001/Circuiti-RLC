@@ -64,14 +64,14 @@ int SmallRange() {
   double const x2 = (a == 0.) ? -c / a : -(b + sqrt(delta)) / (2 * a);
 
   double const dx1 =
-      (a == 0.) ? eval(1 / a) * dc + eval(c / (pow(a, 2))) * da
-                : eval(0.5 / a * (b / sqrt(delta) - 1)) * db +
-                      eval(1 / sqrt(delta)) * dc +
-                      eval(0.5 * b - 0.5 * sqrt(delta) - a * c / sqrt(delta)) *
-                          da / pow(a, 2);
+      (a == 0.) ? eval(c / (pow(a, 2))) * da + eval(1 / a) * dc
+                : eval(0.5 * b - 0.5 * sqrt(delta) - a * c / sqrt(delta)) * da /
+                          pow(a, 2) +
+                      eval(0.5 / a * (b / sqrt(delta) - 1)) * db +
+                      eval(1 / sqrt(delta)) * dc;
 
   double const dx2 =
-      (a == 0.) ? eval(1 / a) * dc + eval(c / (pow(a, 2))) * da
+      (a == 0.) ? eval(c / (pow(a, 2))) * da + eval(1 / a) * dc
                 : eval(0.5 * b + 0.5 * sqrt(delta) + a * c / sqrt(delta)) * da /
                           pow(a, 2) +
                       0.5 * eval(1 / a + b / sqrt(delta) / a) * db +
