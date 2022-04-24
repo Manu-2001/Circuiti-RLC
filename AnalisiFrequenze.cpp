@@ -55,7 +55,6 @@ int SmallRange() {
   double const dc = TparError[2] + WparError[2];
 
   double const delta = b * b - 4 * a * c;
-  double const ddelta = 4 * eval(c) * da + 2 * eval(b) * db + 4 * eval(a) * dc;
 
   if (delta < 0.) {
     return EXIT_FAILURE;
