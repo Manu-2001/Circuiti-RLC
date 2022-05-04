@@ -31,7 +31,7 @@ void printData(double data, double dataError, std::string const& u) {
   std::cout << data << " ± " << dataError << ' ' << u;
 }
 
-void Statistic(double& X, double& Y, double& XStd, double& Ystd,
+void Statistic(double& X, double& Y, double& XStd, double& YStd,
                std::string const& fileName) {
   std::ifstream in;
 
@@ -42,7 +42,7 @@ void Statistic(double& X, double& Y, double& XStd, double& Ystd,
   X = 0.;
   Y = 0.;
   XStd = 0.;
-  Ystd = 0.;
+  YStd = 0.;
 
   // Calcolo media e deviazione standard sulle x e sulle y
   in.open(fileName);
@@ -81,5 +81,5 @@ void Statistic(double& X, double& Y, double& XStd, double& Ystd,
 
   // deviazioni standard
   XStd = sqrt(dx2 / (N - 1));
-  Ystd = sqrt(dy2 / (N - 1));
+  YStd = sqrt(dy2 / (N - 1));
 }
