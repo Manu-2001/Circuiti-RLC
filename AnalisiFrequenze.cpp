@@ -12,7 +12,8 @@
 // Dati: frequenza range ristretto 3.75 kHz - 4.75 kHz
 // Sorgente: sinusoide di ampiezza 5V, sweep con salti di 10Hz
 // Campionamento: 300 KHz
-// CrossOver trovato: (4052.0 ± 0.9) Hz
+// Analisi da fit parabolico:
+//  - CrossOver trovato: (4052.0 ± 0.9) Hz
 
 double eval(double);
 
