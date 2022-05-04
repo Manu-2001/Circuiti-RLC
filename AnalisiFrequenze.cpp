@@ -15,6 +15,9 @@
 // Campionamento: 300 KHz
 // Analisi da fit parabolico:
 //  - CrossOver trovato: (4052.0 ± 0.9) Hz
+// Dall'analisi sul rumore:
+//  - Frequenza: Media: 4022.96	std: 0.0527788
+//  - Diff di potenziale: media: 1.39167	std: 0.000447848
 
 R__LOAD_LIBRARY(myFunction_cpp.so);
 
