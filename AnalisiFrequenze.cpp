@@ -16,8 +16,10 @@
 // Analisi da fit parabolico:
 //  - CrossOver trovato: (4052.0 ± 0.9) Hz
 // Dall'analisi sul rumore:
-//  - Frequenza: Media: 4022.96	std: 0.0527788
-//  - Diff di potenziale: media: 1.39167	std: 0.000447848
+//  - Frequenza (Hz):   Media: 4022.96	std: 0.0527788
+//  - ddp (V):          media: 1.39167	std: 0.000447848
+//  - (:) Freq attesa ~ 4023 Hz
+//  - (:) Amp. attesa ~ 1.5 V + caduta causata dai 50 Ohm generatore
 
 R__LOAD_LIBRARY(myFunction_cpp.so);
 
@@ -27,7 +29,8 @@ int SmallRange(bool draw = false) {
   double V{};
   double VStd{};
 
-  Statistic(f, V, fStd, VStd);
+  Statistic(f, V, fStd, VStd, "rumore.txt");
+
   std::cout << "\nAnalisi rumore per la fase:"
             << "\n Frequenza: media: " << f << "\tDeviazione Standard: " << fStd
             << ".\n Diff. di potenziale: media: " << V
@@ -98,6 +101,6 @@ int SmallRange(bool draw = false) {
   printData(f1, df1, 4023, 30, "Hz");
   std::cout << "\n  f2: ";
   printData(f2, df2, 4023, 30, "Hz");
-  std::cout<<'\n';
+  std::cout << '\n';
   return 0;
 }
