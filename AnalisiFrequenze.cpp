@@ -1,5 +1,4 @@
 #include <cmath>
-#include <fstream>
 #include <iostream>
 
 #include "TCanvas.h"
@@ -9,6 +8,7 @@
 #include "TLegend.h"
 #include "TROOT.h"
 #include "TStyle.h"
+#include "myFunction.hpp"
 
 // Dati: frequenza range ristretto 3.75 kHz - 4.75 kHz
 // Sorgente: sinusoide di ampiezza 5V, sweep con salti di 10Hz
@@ -16,9 +16,7 @@
 // Analisi da fit parabolico:
 //  - CrossOver trovato: (4052.0 ± 0.9) Hz
 
-double eval(double);  // funzione valore assoluto
-void Statistic(double&, double&, double&,
-               double&);  // calcola media e deviazione standard
+R__LOAD_LIBRARY(myFunction_cpp.so);
 
 int SmallRange(bool draw = false) {
   double f{};
@@ -34,7 +32,6 @@ int SmallRange(bool draw = false) {
 
   TGraph* Tweeter = new TGraph("tweeter.txt", "%lg%lg", "");
   TGraph* Woofer = new TGraph("woofer.txt", "%lg%lg", "");
-  TGraph* Rumore = new TGraph("rumore.txt", "%lg%lg", "");
 
   TF1* parabola = new TF1("parabola", "[0]*x*x + [1]*x + [2]", 3000., 5000.);
 
@@ -94,62 +91,10 @@ int SmallRange(bool draw = false) {
                       0.5 * eval(1 / a + b / sqrt(delta) / a) * db +
                       eval(1 / sqrt(delta)) * dc;
 
-  std::cout << "\nCrossOver:\n  f1 = (" << f1 << " ± " << df1 << ") Hz\tf2 = ("
-            << f2 << " ± " << df2 << ") Hz.\n";
-
+  std::cout << "\nCrossOver:\n  f1: ";
+  printData(f1, df1, 4023, 30, "Hz");
+  std::cout << "\n  f2: ";
+  printData(f2, df2, 4023, 30, "Hz");
+  std::cout<<'\n';
   return 0;
-}
-
-double eval(double x) { return (x >= 0.) ? x : -x; }
-
-void Statistic(double& X, double& Y, double& XStd, double& Ystd) {
-  std::ifstream in;
-
-  double x{}, y{};
-  double dx2{}, dy2{};
-  int N{};
-
-  X = 0.;
-  Y = 0.;
-  XStd = 0.;
-  Ystd = 0.;
-
-  // Calcolo media e deviazione standard sulle x e sulle y
-  in.open("rumore.txt");
-
-  while (true) {
-    in >> x >> y;
-    if (!in.good()) {
-      break;
-    } else {
-      ++N;
-      X += x;
-      Y += y;
-    }
-  }
-
-  in.close();
-  
-  // medie
-  X = X / N;
-  Y = Y / N;
-
-  in.open("rumore.txt");
-
-  while (true) {
-    in >> x >> y;
-    if (!in.good()) {
-      break;
-    } else {
-      ++N;
-      dx2 += pow(x - X, 2);
-      dy2 += pow(y - Y, 2);
-    }
-  }
-
-  in.close();
-
-  // deviazioni standard
-  XStd = sqrt(dx2 / (N - 1));
-  Ystd = sqrt(dy2 / (N - 1));
 }
