@@ -3,7 +3,7 @@
 
 #include "TCanvas.h"
 #include "TF1.h"
-#include "TGraph.h"
+#include "TGraphErrors.h"
 #include "TH1D.h"
 #include "TLegend.h"
 #include "TROOT.h"
@@ -13,8 +13,9 @@
 // Dati: frequenza range ristretto 3.75 kHz - 4.75 kHz
 // Sorgente: sinusoide di ampiezza 5V, sweep con salti di 10Hz
 // Campionamento: 300 KHz
-// Analisi da fit parabolico:
-//  - CrossOver trovato: (4052.0 ± 0.9) Hz
+// Analisi da fit parabolico CrossOver:
+//  - con errori in (f,V): (4052 ± 61) Hz
+//  - senza errori in (f,V): (4052.0 ± 0.9) Hz
 // Dall'analisi sul rumore:
 //  - Frequenza (Hz):   Media: 4022.96	std: 0.0527788
 //  - ddp (V):          media: 1.39167	std: 0.000447848
@@ -31,13 +32,8 @@ int SmallRange(bool draw = false) {
 
   Statistic(f, V, fStd, VStd, "rumore.txt");
 
-  std::cout << "\nAnalisi rumore per la fase:"
-            << "\n Frequenza: media: " << f << "\tDeviazione Standard: " << fStd
-            << ".\n Diff. di potenziale: media: " << V
-            << "\tDeviazione Standard: " << VStd << ".\n";
-
-  TGraph* Tweeter = new TGraph("tweeter.txt", "%lg%lg", "");
-  TGraph* Woofer = new TGraph("woofer.txt", "%lg%lg", "");
+  TGraphErrors* Tweeter = new TGraphErrors("tweeter.txt", "%lg%lg%lg%lg", "");
+  TGraphErrors* Woofer = new TGraphErrors("woofer.txt", "%lg%lg%lg%lg", "");
 
   TF1* parabola = new TF1("parabola", "[0]*x*x + [1]*x + [2]", 3000., 5000.);
 
@@ -46,20 +42,6 @@ int SmallRange(bool draw = false) {
 
   Woofer->Fit("parabola", "R");
   TF1* FitWoofer = Woofer->GetFunction("parabola");
-
-  if (draw) {
-    TCanvas* TResult = new TCanvas("TResult", "Tweeter fit");
-    Tweeter->Draw();
-    FitTweeter->Draw("SAME");
-
-    TCanvas* WResult = new TCanvas("WResult", "Woofer fit");
-    Woofer->Draw();
-    FitWoofer->Draw("SAME");
-
-    TCanvas* Confronto = new TCanvas("Confronto", "Intersezione dei fit");
-    FitTweeter->Draw();
-    FitWoofer->Draw("SAME");
-  }
 
   double const* Tpar = FitTweeter->GetParameters();
   double const* Wpar = FitWoofer->GetParameters();
@@ -97,10 +79,30 @@ int SmallRange(bool draw = false) {
                       0.5 * eval(1 / a + b / sqrt(delta) / a) * db +
                       eval(1 / sqrt(delta)) * dc;
 
+  std::cout << "\nAnalisi rumore:"
+            << "\n Frequenza: media: " << f << "\tdev. std: " << fStd
+            << ".\n ddp:       media: " << V
+            << "\tdev. std: " << VStd << ".\n";
+
   std::cout << "\nCrossOver:\n  f1: ";
-  printData(f1, df1, 4023, 30, "Hz");
+  printData(f1, df1, 4023, "Hz");
   std::cout << "\n  f2: ";
-  printData(f2, df2, 4023, 30, "Hz");
+  printData(f2, df2, 4023, "Hz");
   std::cout << '\n';
+
+  if (draw) {
+    TCanvas* TResult = new TCanvas("TResult", "Tweeter fit");
+    Tweeter->Draw();
+    FitTweeter->Draw("SAME");
+
+    TCanvas* WResult = new TCanvas("WResult", "Woofer fit");
+    Woofer->Draw();
+    FitWoofer->Draw("SAME");
+
+    TCanvas* Confronto = new TCanvas("Confronto", "Intersezione dei fit");
+    FitTweeter->Draw();
+    FitWoofer->Draw("SAME");
+  }
+
   return 0;
 }

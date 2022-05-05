@@ -1,34 +1,28 @@
 #include "myFunction.hpp"
 
-double eval(double x) { return (x >= 0.) ? x : -x; }
+double eval(double x) { return (x > 0.) ? x : -x; }
 
-void printData(double data, double dataError, double value, double valueError,
-               std::string const& u) {
-  if ((value + valueError >= data - dataError &&
-       value - valueError <= data + dataError) ||
-      (value + valueError <= data - dataError &&
-       value - valueError >= data + dataError)) {
-    std::cout << "\033[32m" << data << " ± " << dataError << ' ' << u
-              << "\033[0m";
+void printData(double X, double dx, double Y, double dy, std::string const& u) {
+  if ((Y + dy >= X - dx && Y - dy <= X + dx) ||
+      (Y + dy <= X - dx && Y - dy >= X + dx)) {
+    std::cout << "\033[32m" << X << " ± " << dx << ' ' << u << "\033[0m";
   } else {
-    std::cout << "\033[35m" << data << " ± " << dataError << ' ' << u
-              << "   dis.: " << (value - data) / dataError << " error\033[0m";
+    std::cout << "\033[35m" << X << " ± " << dx << ' ' << u
+              << "   dis.: " << (Y - X) / dx << " error\033[0m";
   }
 }
 
-void printData(double data, double dataError, double value,
-               std::string const& u) {
-  if (value >= data - dataError && value <= data + dataError) {
-    std::cout << "\033[32m" << data << " ± " << dataError << ' ' << u
-              << "\033[0m";
+void printData(double X, double dx, double Y, std::string const& u) {
+  if (Y >= X - dx && Y <= X + dx) {
+    std::cout << "\033[32m" << X << " ± " << dx << ' ' << u << "\033[0m";
   } else {
-    std::cout << "\033[35m" << data << " ± " << dataError << ' ' << u
-              << "   dis.: " << (value - data) / dataError << " error\033[0m";
+    std::cout << "\033[35m" << X << " ± " << dx << ' ' << u
+              << "   dis.: " << (Y - X) / dx << " error\033[0m";
   }
 }
 
-void printData(double data, double dataError, std::string const& u) {
-  std::cout << data << " ± " << dataError << ' ' << u;
+void printData(double X, double dx, std::string const& u) {
+  std::cout << X << " ± " << dx << ' ' << u;
 }
 
 void Statistic(double& X, double& Y, double& XStd, double& YStd,
