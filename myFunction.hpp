@@ -8,7 +8,7 @@
 
 // funzione valore assoluto
 double eval(double);
-// stampa la misura X e confronta con quella atessa Y
+// stampa la misura X e confronta con quella atesa Y
 //                X      dx       Y      dy      unità di musura
 void printData(double, double, double, double, std::string const&);
 //                X      dx       Y      unità di musura
