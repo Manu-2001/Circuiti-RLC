@@ -25,17 +25,11 @@
 R__LOAD_LIBRARY(myFunction_cpp.so);
 
 int SmallRange(bool draw = false) {
-  double f{};
-  double fStd{};
-  double V{};
-  double VStd{};
-
-  Statistic(f, V, fStd, VStd, "rumore.txt");
-
   TGraphErrors* Tweeter = new TGraphErrors("tweeter.txt", "%lg%lg%lg%lg", "");
   TGraphErrors* Woofer = new TGraphErrors("woofer.txt", "%lg%lg%lg%lg", "");
-
   TF1* parabola = new TF1("parabola", "[0]*x*x + [1]*x + [2]", 3000., 5000.);
+
+  char s{};
 
   Tweeter->Fit("parabola", "R");
   TF1* FitTweeter = Tweeter->GetFunction("parabola");
@@ -79,10 +73,28 @@ int SmallRange(bool draw = false) {
                       0.5 * eval(1 / a + b / sqrt(delta) / a) * db +
                       eval(1 / sqrt(delta)) * dc;
 
-  std::cout << "\nAnalisi rumore:"
-            << "\n Frequenza: media: " << f << "\tdev. std: " << fStd
-            << ".\n ddp:       media: " << V
-            << "\tdev. std: " << VStd << ".\n";
+  std::cout << "\nAnalizzare il rumore? (S/N): ";
+  std::cin >> s;
+
+  std::cout << '\n';
+
+  if (s == 's' || s == 'S') {
+    double f{};
+    double fStd{};
+    double V{};
+    double VStd{};
+
+    Statistic(f, V, fStd, VStd, "rumore.txt");
+
+    std::cout << "Analisi rumore:"
+              << "\n Frequenza: media: " << f << "\tdev. std: " << fStd
+              << "\n ddp:       media: " << V << "\tdev. std: " << VStd
+              << "\nConsidera che le ";
+  }
+
+  std::cout
+      << "Dev. std usate come errori nei dati sono:\n - df: 0.0527788\n - "
+         "dV: 0.000447848\n";
 
   std::cout << "\nCrossOver:\n  f1: ";
   printData(f1, df1, 4023, "Hz");
