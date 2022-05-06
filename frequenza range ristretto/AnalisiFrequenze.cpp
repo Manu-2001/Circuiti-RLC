@@ -27,7 +27,10 @@ R__LOAD_LIBRARY(myFunction_cpp.so);
 int SmallRange(bool draw = false) {
   TGraphErrors* Tweeter = new TGraphErrors("tweeter.txt", "%lg%lg%lg%lg", "");
   TGraphErrors* Woofer = new TGraphErrors("woofer.txt", "%lg%lg%lg%lg", "");
+
   TF1* parabola = new TF1("parabola", "[0]*x*x + [1]*x + [2]", 3000., 5000.);
+
+  misura X1{}, X2{}, Y1{}, Y2{};
 
   char s{};
 
@@ -37,58 +40,23 @@ int SmallRange(bool draw = false) {
   Woofer->Fit("parabola", "R");
   TF1* FitWoofer = Woofer->GetFunction("parabola");
 
-  double const* Tpar = FitTweeter->GetParameters();
-  double const* Wpar = FitWoofer->GetParameters();
-  double const* TparError = FitTweeter->GetParErrors();
-  double const* WparError = FitWoofer->GetParErrors();
-
-  double const a = Tpar[0] - Wpar[0];
-  double const b = Tpar[1] - Wpar[1];
-  double const c = Tpar[2] - Wpar[2];
-
-  double const da = TparError[0] + WparError[0];
-  double const db = TparError[1] + WparError[1];
-  double const dc = TparError[2] + WparError[2];
-
-  double const delta = b * b - 4 * a * c;
-
-  if (delta < 0.) {
-    return EXIT_FAILURE;
-  }
-
-  double const f1 = (a == 0.) ? -c / a : (-b + sqrt(delta)) / (2 * a);
-  double const f2 = (a == 0.) ? -c / a : -(b + sqrt(delta)) / (2 * a);
-
-  double const df1 =
-      (a == 0.) ? eval(c / (pow(a, 2))) * da + eval(1 / a) * dc
-                : eval(0.5 * b - 0.5 * sqrt(delta) - a * c / sqrt(delta)) * da /
-                          pow(a, 2) +
-                      eval(0.5 / a * (b / sqrt(delta) - 1)) * db +
-                      eval(1 / sqrt(delta)) * dc;
-
-  double const df2 =
-      (a == 0.) ? eval(c / (pow(a, 2))) * da + eval(1 / a) * dc
-                : eval(0.5 * b + 0.5 * sqrt(delta) + a * c / sqrt(delta)) * da /
-                          pow(a, 2) +
-                      0.5 * eval(1 / a + b / sqrt(delta) / a) * db +
-                      eval(1 / sqrt(delta)) * dc;
+  Intersezione(X1, X2, Y1, Y2, FitTweeter,FitWoofer, false);
 
   std::cout << "\nAnalizzare il rumore? (S/N): ";
   std::cin >> s;
-
   std::cout << '\n';
 
   if (s == 's' || s == 'S') {
-    double f{};
+    double fm{};
     double fStd{};
-    double V{};
+    double Vm{};
     double VStd{};
 
-    Statistic(f, V, fStd, VStd, "rumore.txt");
+    Statistic(fm, Vm, fStd, VStd, "rumore.txt");
 
     std::cout << "Analisi rumore:"
-              << "\n Frequenza: media: " << f << "\tdev. std: " << fStd
-              << "\n ddp:       media: " << V << "\tdev. std: " << VStd
+              << "\n Frequenza: media: " << fm << "\tdev. std: " << fStd
+              << "\n ddp:       media: " << Vm << "\tdev. std: " << VStd
               << "\nConsidera che le ";
   }
 
@@ -97,10 +65,18 @@ int SmallRange(bool draw = false) {
          "dV: 0.000447848\n";
 
   std::cout << "\nCrossOver:\n  f1: ";
-  printData(f1, df1, 4023, "Hz");
-  std::cout << "\n  f2: ";
-  printData(f2, df2, 4023, "Hz");
-  std::cout << '\n';
+  (void)printData(X1, 4023, "Hz");
+  std::cout<<"\t V1: ";
+  (void)printData(Y1, "V");
+  std::cout<<"\n  f2: ";
+  (void)printData(X2, 4023, "Hz");
+  std::cout<<"\t V2: ";
+  (void)printData(Y2, "V");
+
+  double* X = &X1.p;
+  double* dX = &X1.d;
+  double* Y = &Y1.p;
+  double* dY = &Y1.d;
 
   if (draw) {
     TCanvas* TResult = new TCanvas("TResult", "Tweeter fit");
@@ -130,17 +106,24 @@ int SmallRange(bool draw = false) {
     TCanvas* Confronto = new TCanvas("Confronto", "Intersezione dei fit");
     Tweeter->SetTitle("Confronto woofer e tweeter");
     Tweeter->GetYaxis()->SetRangeUser(2.50, 3.05);
+    Tweeter->GetXaxis()->SetRangeUser(3750, 4800);
     Tweeter->Draw();
     FitTweeter->Draw("SAME");
     Woofer->Draw("SAME");
     FitWoofer->Draw("SAME");
+    TGraphErrors* PointCrossOver = new TGraphErrors(1, X, Y, dX, dY);
+    PointCrossOver->SetMarkerStyle(20);
+    PointCrossOver->SetLineColor(kBlue);
+    PointCrossOver->Draw("SAME");
     TLegend* ConfrontoLegend = new TLegend(.1, .7, .3, .9, "Legend");
     ConfrontoLegend->AddEntry(Tweeter, "Tweeter data");
     ConfrontoLegend->AddEntry(FitTweeter, "Parabolic fit");
     ConfrontoLegend->AddEntry(Woofer, "Woofer data");
     ConfrontoLegend->AddEntry(FitWoofer, "Parabolic fit");
+    ConfrontoLegend->AddEntry(PointCrossOver, "CrossOver");
     ConfrontoLegend->Draw("SAME");
   }
 
+  std::cout<<'\n';
   return 0;
 }
