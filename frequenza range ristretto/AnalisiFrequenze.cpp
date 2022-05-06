@@ -104,16 +104,41 @@ int SmallRange(bool draw = false) {
 
   if (draw) {
     TCanvas* TResult = new TCanvas("TResult", "Tweeter fit");
+    Tweeter->SetTitle("Tweeter fit");
+    Tweeter->GetXaxis()->SetTitle("Frequency [Hz]");
+    Tweeter->GetYaxis()->SetTitle("ddp [V]");
+    FitTweeter->SetLineColor(kOrange + 1);
     Tweeter->Draw();
     FitTweeter->Draw("SAME");
+    TLegend* TweeterLegend = new TLegend(.1, .7, .3, .9, "Legend");
+    TweeterLegend->AddEntry(Tweeter, "Tweeter data");
+    TweeterLegend->AddEntry(FitTweeter, "Parabolic fit");
+    TweeterLegend->Draw("SAME");
 
     TCanvas* WResult = new TCanvas("WResult", "Woofer fit");
+    Woofer->SetTitle("Tweeter fit");
+    Woofer->GetXaxis()->SetTitle("Frequency [Hz]");
+    Woofer->GetYaxis()->SetTitle("ddp [V]");
     Woofer->Draw();
+    FitWoofer->SetLineColor(kGreen + 1);
     FitWoofer->Draw("SAME");
+    TLegend* WooferLegend = new TLegend(.1, .7, .3, .9, "Legend");
+    WooferLegend->AddEntry(Woofer, "Woofer data");
+    WooferLegend->AddEntry(FitWoofer, "Parabolic fit");
+    WooferLegend->Draw("SAME");
 
     TCanvas* Confronto = new TCanvas("Confronto", "Intersezione dei fit");
-    FitTweeter->Draw();
+    Tweeter->SetTitle("Confronto woofer e tweeter");
+    Tweeter->Draw();
+    FitTweeter->Draw("SAME");
+    Woofer->Draw("SAME");
     FitWoofer->Draw("SAME");
+    TLegend* ConfrontoLegend = new TLegend(.1, .7, .3, .9, "Legend");
+    ConfrontoLegend->AddEntry(Tweeter, "Tweeter data");
+    ConfrontoLegend->AddEntry(FitTweeter, "Parabolic fit");
+    ConfrontoLegend->AddEntry(Woofer, "Woofer data");
+    ConfrontoLegend->AddEntry(FitWoofer, "Parabolic fit");
+    ConfrontoLegend->Draw("SAME");
   }
 
   return 0;
