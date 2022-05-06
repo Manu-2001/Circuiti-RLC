@@ -40,7 +40,7 @@ int SmallRange(bool draw = false) {
   Woofer->Fit("parabola", "R");
   TF1* FitWoofer = Woofer->GetFunction("parabola");
 
-  Intersezione(X1, X2, Y1, Y2, FitTweeter,FitWoofer, false);
+  Intersezione(X1, X2, Y1, Y2, FitTweeter, FitWoofer, false);
 
   std::cout << "\nAnalizzare il rumore? (S/N): ";
   std::cin >> s;
@@ -66,17 +66,12 @@ int SmallRange(bool draw = false) {
 
   std::cout << "\nCrossOver:\n  f1: ";
   (void)printData(X1, 4023, "Hz");
-  std::cout<<"\t V1: ";
+  std::cout << "\t V1: ";
   (void)printData(Y1, "V");
-  std::cout<<"\n  f2: ";
+  std::cout << "\n  f2: ";
   (void)printData(X2, 4023, "Hz");
-  std::cout<<"\t V2: ";
+  std::cout << "\t V2: ";
   (void)printData(Y2, "V");
-
-  double* X = &X1.p;
-  double* dX = &X1.d;
-  double* Y = &Y1.p;
-  double* dY = &Y1.d;
 
   if (draw) {
     TCanvas* TResult = new TCanvas("TResult", "Tweeter fit");
@@ -111,7 +106,8 @@ int SmallRange(bool draw = false) {
     FitTweeter->Draw("SAME");
     Woofer->Draw("SAME");
     FitWoofer->Draw("SAME");
-    TGraphErrors* PointCrossOver = new TGraphErrors(1, X, Y, dX, dY);
+    TGraphErrors* PointCrossOver =
+        new TGraphErrors(1, &X1.p, &Y1.p, &X1.d, &Y1.d);
     PointCrossOver->SetMarkerStyle(20);
     PointCrossOver->SetLineColor(kBlue);
     PointCrossOver->Draw("SAME");
@@ -124,6 +120,6 @@ int SmallRange(bool draw = false) {
     ConfrontoLegend->Draw("SAME");
   }
 
-  std::cout<<'\n';
+  std::cout << '\n';
   return 0;
 }
