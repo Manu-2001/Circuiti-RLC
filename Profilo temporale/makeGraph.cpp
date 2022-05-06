@@ -13,6 +13,10 @@ void makeGraph(int dati = -1) {
   TGraph* Tweeter = new TGraph("tweeter.txt", "%lg%lg", "");
   TGraph* Woofer = new TGraph("woofer.txt", "%lg%lg", "");
 
+  TCanvas* Grafico = new TCanvas("Graph", "Graph");
+  
+  TLegend* Legenda = new TLegend(.1, .7, .3, .9, "Legend");
+
   std::string Title{};
 
   if (!(dati == 0 || dati == 1 || dati == 2)) {
@@ -39,8 +43,6 @@ void makeGraph(int dati = -1) {
       break;
   }
 
-  TCanvas* Grafico = new TCanvas("Graph", "Graph");
-
   Sorgente->SetTitle(Title.c_str());
   Sorgente->GetYaxis()->SetRangeUser(-5, 5);
   Sorgente->GetXaxis()->SetTitle("Time [t]");
@@ -61,7 +63,6 @@ void makeGraph(int dati = -1) {
   Woofer->SetLineWidth(2);
   Woofer->Draw("SAME");
 
-  TLegend* Legenda = new TLegend(.1, .7, .3, .9, "Legend");
   Legenda->AddEntry(Sorgente, "Sorgente");
   Legenda->AddEntry(Tweeter, "Tweeter");
   Legenda->AddEntry(Woofer, "Woofer");
