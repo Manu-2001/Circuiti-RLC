@@ -129,6 +129,7 @@ int SmallRange(bool draw = false) {
 
     TCanvas* Confronto = new TCanvas("Confronto", "Intersezione dei fit");
     Tweeter->SetTitle("Confronto woofer e tweeter");
+    Tweeter->GetYaxis()->SetRangeUser(2.50, 3.05);
     Tweeter->Draw();
     FitTweeter->Draw("SAME");
     Woofer->Draw("SAME");
