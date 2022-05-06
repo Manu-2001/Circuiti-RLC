@@ -23,10 +23,10 @@ void makeGraph(int dati = -1) {
     std::cout << "\nQuali dati stai usando?"
               << "\n - 0: Sotto il CrossOver - 2.5kHz"
               << "\n - 1: CrossOver - 4.023kHz "
-              << "\n - 2: Sopra il CrossOver - 6.25kHz";
+              << "\n - 2: Sopra il CrossOver - 6.25kHz\t";
 
     do {
-      std::cout << "\t(0-1-2)?: ";
+      std::cout << " (0-1-2)?: ";
       std::cin >> dati;
     } while (!(dati == 0 || dati == 1 || dati == 2));
   }
