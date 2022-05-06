@@ -45,19 +45,19 @@ void makeGraph(int dati = -1) {
 
   Sorgente->SetTitle(Title.c_str());
   Sorgente->GetYaxis()->SetRangeUser(-5, 5);
-  Sorgente->GetXaxis()->SetTitle("Time [t]");
+  Sorgente->GetXaxis()->SetTitle("time [s]");
   Sorgente->GetYaxis()->SetTitle("ddp [V]");
   Sorgente->SetLineColor(kGreen + 1);
   Sorgente->SetLineWidth(2);
   Sorgente->Draw();
 
-  Tweeter->GetXaxis()->SetTitle("Time [t]");
+  Tweeter->GetXaxis()->SetTitle("time [s]");
   Tweeter->GetYaxis()->SetTitle("ddp [V]");
   Tweeter->SetLineColor(kBlue);
   Tweeter->SetLineWidth(2);
   Tweeter->Draw("SAME");
 
-  Woofer->GetXaxis()->SetTitle("Time [t]");
+  Woofer->GetXaxis()->SetTitle("time [s]");
   Woofer->GetYaxis()->SetTitle("ddp [V]");
   Woofer->SetLineColor(kOrange);
   Woofer->SetLineWidth(2);
