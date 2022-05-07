@@ -105,13 +105,9 @@ int Intersezione(misura& X1, misura& X2, misura& Y1, misura& Y2, TF1* const& f,
   double gp2{};
   double tmp{};
 
-  if (a == 0.) {
-    return EXIT_FAILURE;
-  }
-
   double const delta = b * b - 4 * a * c;
 
-  if (delta < 0.) {
+  if (delta < 0. || a == 0.) {
     return EXIT_FAILURE;
   }
 
@@ -123,10 +119,11 @@ int Intersezione(misura& X1, misura& X2, misura& Y1, misura& Y2, TF1* const& f,
   fp0 = eval(c / (a * sqrt(delta)) + (-b + sqrt(delta)) / (2 * pow(a, 2)));
   fp1 = eval((b / sqrt(delta) - 1) / (2 * a));
   fp2 = 1 / sqrt(delta);
-  gp0 = eval(c / (a * sqrt(delta)) + (-b + sqrt(delta)) / (2 * pow(a, 2)));
+  gp0 = fp0;
   gp1 = eval((1 - b / sqrt(delta)) / (2 * a));
-  gp2 = 1 / sqrt(delta);
+  gp2 = fp2;
 
+  // errore in quadratura o lineare per X1
   if (quad) {
     X1.d = sqrt(pow(fp0 * dfp[0], 2) + pow(fp1 * dfp[1], 2) +
                 pow(fp2 * dfp[2], 2) + pow(gp0 * dgp[0], 2) +
@@ -139,9 +136,10 @@ int Intersezione(misura& X1, misura& X2, misura& Y1, misura& Y2, TF1* const& f,
   // calcolo delle derivate per X2
   fp0 = eval(c / (a * sqrt(delta)) + (b + sqrt(delta)) / (2 * pow(a, 2)));
   fp1 = eval((b / sqrt(delta) + 1) / (2 * a));
-  gp0 = eval(c / (a * sqrt(delta)) + (b + sqrt(delta)) / (2 * pow(a, 2)));
+  gp0 = fp0;
   gp1 = eval((1 + b / sqrt(delta)) / (2 * a));
 
+  // errore in quadratura o lineare per X2
   if (quad) {
     X2.d = sqrt(pow(fp0 * dfp[0], 2) + pow(fp1 * dfp[1], 2) +
                 pow(fp2 * dfp[2], 2) + pow(gp0 * dgp[0], 2) +
