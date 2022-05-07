@@ -153,39 +153,8 @@ int Intersezione(misura& X1, misura& X2, misura& Y1, misura& Y2, TF1* const& f,
   Y1.p = f->Eval(X1.p);
   Y2.p = f->Eval(X2.p);
 
-  // errore per Y1, prendo il più grande
-  if (quad) {
-    Y1.d = sqrt(pow(pow(X1.p, 2) * dfp[0], 2) + pow(X1.p * dfp[1], 2) +
-                pow(dfp[2], 2) + pow((2 * fp[0] * X1.p + fp[1]) * X1.d, 2));
-    tmp = sqrt(pow(pow(X1.p, 2) * dgp[0], 2) + pow(X1.p * dgp[1], 2) +
-               pow(dgp[2], 2) + pow((2 * gp[0] * X1.p + gp[1]) * X1.d, 2));
-  } else {
-    Y1.d = pow(X1.p, 2) * dfp[0] + X1.p * dfp[1] + dfp[2] +
-           (2 * fp[0] * X1.p + fp[1]) * X1.d;
-    tmp = pow(X1.p, 2) * dgp[0] + X1.p * dgp[1] + dgp[2] +
-          (2 * gp[0] * X1.p + gp[1]) * X1.d;
-  }
-
-  if (tmp > Y1.d) {
-    Y1.d = tmp;
-  }
-
-  // errore per Y2, prendo il più grande
-  if (quad) {
-    Y2.d = sqrt(pow(pow(X2.p, 2) * dfp[0], 2) + pow(X2.p * dfp[1], 2) +
-                pow(dfp[2], 2) + pow((2 * fp[0] * X2.p + fp[1]) * X2.d, 2));
-    tmp = sqrt(pow(pow(X2.p, 2) * dgp[0], 2) + pow(X2.p * dgp[1], 2) +
-               pow(dgp[2], 2) + pow((2 * gp[0] * X2.p + gp[1]) * X2.d, 2));
-  } else {
-    Y2.d = pow(X2.p, 2) * dfp[0] + X2.p * dfp[1] + dfp[2] +
-           (2 * fp[0] * X2.p + fp[1]) * X2.d;
-    tmp = pow(X2.p, 2) * dgp[0] + X2.p * dgp[1] + dgp[2] +
-          (2 * gp[0] * X2.p + gp[1]) * X2.d;
-  }
-
-  if (tmp > Y2.d) {
-    Y2.d = tmp;
-  }
-
+  Y1.d = 0.;
+  Y2.d = 0.;
+  
   return 0;
 }
