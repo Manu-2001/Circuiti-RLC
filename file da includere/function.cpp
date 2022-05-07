@@ -103,7 +103,6 @@ int Intersezione(misura& X1, misura& X2, misura& Y1, misura& Y2, TF1* const& f,
   double gp0{};
   double gp1{};
   double gp2{};
-  double tmp{};
 
   double const delta = b * b - 4 * a * c;
 
