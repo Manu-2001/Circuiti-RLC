@@ -86,8 +86,8 @@ void Statistic(double& X, double& Y, double& XStd, double& YStd,
   YStd = sqrt(dy2 / (N - 1));
 }
 
-int Intersezione(misura& X1, misura& X2, misura& Y1, misura& Y2, TF1* const& f,
-                 TF1* const& g, bool quad) {
+int IntersParab(misura& X1, misura& X2, misura& Y1, misura& Y2, TF1* const& f,
+                TF1* const& g, bool quad) {
   double const* fp = f->GetParameters();
   double const* gp = g->GetParameters();
   double const* dfp = f->GetParErrors();
@@ -154,6 +154,37 @@ int Intersezione(misura& X1, misura& X2, misura& Y1, misura& Y2, TF1* const& f,
 
   Y1.d = 0.;
   Y2.d = 0.;
-  
+
+  return 0;
+}
+
+int IntersRette(misura& X, misura& Y, TF1* const& f, TF1* const& g, bool quad) {
+  double const* fp = f->GetParameters();
+  double const* gp = g->GetParameters();
+  double const* dfp = f->GetParErrors();
+  double const* dgp = g->GetParErrors();
+
+  double const m = fp[0] - gp[0];
+  double const q = fp[1] - gp[1];
+
+  if (m == 0.) {
+    return EXIT_FAILURE;
+  }
+
+  X.p = -q / m;
+  Y.p = fp[0] * X.p + fp[1];
+
+  Y.d = 0.;
+
+  if (quad) {
+    X.d = sqrt(pow(dfp[0] * q / pow(m, 2), 2) + pow(dfp[1] / m, 2) +
+               pow(dgp[0] * q / pow(m, 2), 2) + pow(dgp[1] / m, 2));
+
+    return 0;
+  }
+
+  X.d = eval(q) / pow(m, 2) * dfp[0] + eval(1 / m) * dfp[1] +
+        eval(q) / pow(m, 2) * dgp[0] + eval(1 / m) * dgp[1];
+
   return 0;
 }
