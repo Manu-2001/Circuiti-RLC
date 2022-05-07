@@ -40,7 +40,7 @@ int SmallRange(bool draw = false) {
   Woofer->Fit("parabola", "R");
   TF1* FitWoofer = Woofer->GetFunction("parabola");
 
-  Intersezione(X1, X2, Y1, Y2, FitTweeter, FitWoofer, false);
+  (void)IntersParab(X1, X2, Y1, Y2, FitTweeter, FitWoofer, false);
 
   std::cout << "\nAnalizzare il rumore? (S/N): ";
   std::cin >> s;
