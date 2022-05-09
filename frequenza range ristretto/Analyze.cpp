@@ -38,8 +38,9 @@ int Analyze(bool draw = false) {
   TF1* FitWoofer = (TF1*)file->Get("FitWoofer");
 
   misura X1{}, X2{}, Y1{}, Y2{};
-  misura const fc = {4020, 40};
-  misura const fcq = {4023, 28};
+  misura fc = {4020, 40};
+  misura fcq = {4023, 28};
+  misura Yc = {2.8, 0.};
 
   char s{};
 
@@ -80,49 +81,50 @@ int Analyze(bool draw = false) {
   (void)printData(X2, fc, "Hz");
 
   if (draw) {
-    TCanvas* TResult = new TCanvas("TResult", "Tweeter fit");
-    Tweeter->SetTitle("Tweeter fit");
-    Tweeter->GetXaxis()->SetTitle("Frequency [Hz]");
-    Tweeter->GetYaxis()->SetTitle("ddp [V]");
-    FitTweeter->SetLineColor(kOrange + 1);
-    Tweeter->Draw();
-    FitTweeter->Draw("SAME");
-    TLegend* TweeterLegend = new TLegend(.1, .7, .3, .9, "Legend");
-    TweeterLegend->AddEntry(Tweeter, "Tweeter data");
-    TweeterLegend->AddEntry(FitTweeter, "Parabolic fit");
-    TweeterLegend->Draw("SAME");
-
-    TCanvas* WResult = new TCanvas("WResult", "Woofer fit");
-    Woofer->SetTitle("Woofer fit");
-    Woofer->GetXaxis()->SetTitle("Frequency [Hz]");
-    Woofer->GetYaxis()->SetTitle("ddp [V]");
-    Woofer->Draw();
-    FitWoofer->SetLineColor(kGreen + 1);
-    FitWoofer->Draw("SAME");
-    TLegend* WooferLegend = new TLegend(.1, .7, .3, .9, "Legend");
-    WooferLegend->AddEntry(Woofer, "Woofer data");
-    WooferLegend->AddEntry(FitWoofer, "Parabolic fit");
-    WooferLegend->Draw("SAME");
-
     TCanvas* Confronto = new TCanvas("Confronto", "Intersezione dei fit");
-    Tweeter->SetTitle("Confronto woofer e tweeter");
+    Confronto->SetGrid();
+
+    Tweeter->SetTitle("Risposta in frequenza - Range ristretto");
+    Tweeter->GetXaxis()->SetTitle("Frequenza (Hz)");
+    Tweeter->GetXaxis()->CenterTitle(true);
+    Tweeter->GetYaxis()->SetTitle("Ampiezza (V)");
+    Tweeter->GetYaxis()->CenterTitle(true);
     Tweeter->GetYaxis()->SetRangeUser(2.50, 3.05);
     Tweeter->GetXaxis()->SetRangeUser(3700, 4800);
-    Tweeter->Draw();
+    Tweeter->Draw("ALP");
+
+    FitTweeter->SetLineColor(kOrange + 1);
     FitTweeter->Draw("SAME");
+
+    Woofer->SetTitle("Woofer fit");
+    Woofer->GetXaxis()->SetTitle("Frequenza (Hz)");
+    Woofer->GetXaxis()->CenterTitle(true);
+    Woofer->GetYaxis()->SetTitle("Ampiezza (V)");
+    Woofer->GetYaxis()->CenterTitle(true);
     Woofer->Draw("SAME");
+
+    FitWoofer->SetLineColor(kGreen + 1);
     FitWoofer->Draw("SAME");
+
     TGraphErrors* PointCrossOver =
         new TGraphErrors(1, &X1.p, &Y1.p, &X1.d, &Y1.d);
     PointCrossOver->SetMarkerStyle(20);
     PointCrossOver->SetLineColor(kBlue);
     PointCrossOver->Draw("SAME");
-    TLegend* ConfrontoLegend = new TLegend(.1, .7, .3, .9, "Legend");
-    ConfrontoLegend->AddEntry(Tweeter, "Tweeter data");
+
+    TGraphErrors* CrossOverAtteso =
+        new TGraphErrors(1, &fc.p, &Yc.p, &fc.d, &Yc.d);
+    CrossOverAtteso->SetMarkerStyle(20);
+    CrossOverAtteso->SetLineColor(kRed);
+    CrossOverAtteso->Draw("SAME");
+
+    TLegend* ConfrontoLegend = new TLegend(.1, .7, .3, .9);
+    ConfrontoLegend->AddEntry(Tweeter, "Tweeter");
     ConfrontoLegend->AddEntry(FitTweeter, "Tweeter fit");
-    ConfrontoLegend->AddEntry(Woofer, "Woofer data");
+    ConfrontoLegend->AddEntry(Woofer, "Woofer");
     ConfrontoLegend->AddEntry(FitWoofer, "Woofer fit");
     ConfrontoLegend->AddEntry(PointCrossOver, "CrossOver");
+    ConfrontoLegend->AddEntry(CrossOverAtteso, "CrossOver atteso");
     ConfrontoLegend->Draw("SAME");
   }
 
