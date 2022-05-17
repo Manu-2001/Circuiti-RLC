@@ -10,10 +10,10 @@ void fit (){
 
   TF1* parabola = new TF1("parabola", "[0]*x*x + [1]*x + [2]", 3000., 5000.);
 
-  Tweeter->Fit("parabola", "R");
+  Tweeter->Fit("parabola", "EX0");
   TF1* FitTweeter = Tweeter->GetFunction("parabola");
 
-  Woofer->Fit("parabola", "R");
+  Woofer->Fit("parabola", "EX0");
   TF1* FitWoofer = Woofer->GetFunction("parabola");
 
   Tweeter->SetName("Tweeter");
