@@ -15,7 +15,7 @@
 R__LOAD_LIBRARY(function_cpp.so);
 
 int Analyze() {
-  TFile* file = new TFile("fitdata.root", "READ");
+  TFile* file = new TFile("fitParabData.root", "READ");
 
   TGraphErrors* Tweeter = (TGraphErrors*)file->Get("Tweeter");
   TGraphErrors* Woofer = (TGraphErrors*)file->Get("Woofer");

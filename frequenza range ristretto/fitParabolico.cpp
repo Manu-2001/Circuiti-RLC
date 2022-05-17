@@ -2,8 +2,8 @@
 #include "TGraphErrors.h"
 #include "TFile.h"
 
-void fit (){
-  TFile* myFile = new TFile("fitdata.root", "RECREATE");
+void fitParabolico(){
+  TFile* myFile = new TFile("fitParabData.root", "RECREATE");
 
   TGraphErrors* Tweeter = new TGraphErrors("tweeter.txt", "%lg%lg%lg%lg", "");
   TGraphErrors* Woofer = new TGraphErrors("woofer.txt", "%lg%lg%lg%lg", "");
