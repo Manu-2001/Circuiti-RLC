@@ -4,7 +4,7 @@
 #include <string>
 
 // il file da aprire deve avere per forza due colonne di dati e l'ultima riga
-// deve essere perforza di dati, non un 'a capo'
+// deve essere di dati, non un 'a capo'
 //...                          |  ...
 //14949.962383	1.029530       |  14949.976304	1.029512     
 //14949.976304	1.029512       |  15000.082348	1.026365
