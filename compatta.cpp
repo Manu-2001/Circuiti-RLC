@@ -24,7 +24,7 @@ int main() {
 
   bool esci{false};
   bool stop{};
-  bool isntfirst{false};
+  bool ifnf{false};
 
   std::string line{};
   std::string rowFile{};
@@ -46,18 +46,17 @@ int main() {
 
   while (!esci) {
     stop = false;
-    N = 0;
     xm = 0.;
     ym = 0.;
 
     // leggi i dati ripetuti
     for (x = firstX, y = firstY; !stop; ++x, ++y) {
-      if (x == firstX && isntfirst) {
+      if (x == firstX && ifnf) {
         *x = xtmp;
         *y = ytmp;
         ++x;
         ++y;
-        ++N;
+        N = 1;
         xtmp = 0.;
         ytmp = 0.;
       }
@@ -107,7 +106,7 @@ int main() {
     }
 
     // bruttino ma ci vuole, è un controllo
-    isntfirst = true;
+    ifnf = true;
   }
 
   source.close();
