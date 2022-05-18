@@ -3,6 +3,13 @@
 #include <iostream>
 #include <string>
 
+// il file da aprire deve avere per forza due colonne di dati e l'ultima riga
+// deve essere perforza di dati, non un 'a capo'
+//...                          |  ...
+//14949.962383	1.029530       |  14949.976304	1.029512     
+//14949.976304	1.029512       |  15000.082348	1.026365
+//15000.082348	1.026365    ok |                          così no
+
 int main() {
   using iterator = std::array<double, 5>::iterator;
 
@@ -74,7 +81,7 @@ int main() {
         --N;
         stop = true;
       }
-    }
+    }  // fine ciclo for
 
     // fai la media degli N valori
     for (x = firstX, y = firstY; x != firstX + N; ++x, ++y) {
@@ -107,7 +114,7 @@ int main() {
 
     // bruttino ma ci vuole, è un controllo
     ifnf = true;
-  }
+  }  // fine ciclo while
 
   source.close();
   create.close();
