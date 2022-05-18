@@ -99,18 +99,17 @@ int main() {
     line += std::to_string(ym);
     line += {"\n"};
 
-    // scrivo nel file la riga
-    create << line;
-
     // se devi uscire assicurati di non dimenticarti l'ultimo
     // valore temporaneo
     if (esci && xtmp != 0.) {
-      line = std::to_string(xtmp);
+      line += std::to_string(xtmp);
       line += {"\t"};
       line += std::to_string(ytmp);
       line += {"\n"};
-      create << line;
     }
+    
+    // scrivo nel file
+    create << line;
 
     // bruttino ma ci vuole, è un controllo
     ifnf = true;
