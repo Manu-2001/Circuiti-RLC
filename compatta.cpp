@@ -22,7 +22,6 @@ int main() {
   double ym{};
 
   int N{};
-  int i{};
 
   bool esci{false};
   bool stop{};
