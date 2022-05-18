@@ -15,7 +15,6 @@ int main() {
   iterator x{};
   iterator y{};
 
-  double const step{50.};
   double xtmp{};
   double ytmp{};
   double xm{};
