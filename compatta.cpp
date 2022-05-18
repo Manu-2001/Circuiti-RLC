@@ -40,7 +40,6 @@ int main() {
   std::ofstream create(newFile);
 
   // fine inizializzazione oggetti, inizio istruzioni
-
   if (!(source.is_open() && create.is_open())) {
     return EXIT_FAILURE;
   }
