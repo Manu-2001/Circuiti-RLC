@@ -101,6 +101,7 @@ int main() {
       line = std::to_string(xtmp);
       line += {"\t"};
       line += std::to_string(ytmp);
+      line += {"\n"};
       create << line;
     }
 
