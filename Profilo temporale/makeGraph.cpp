@@ -48,7 +48,7 @@ void makeGraph(int dati = -1) {
   Sorgente->SetTitle(Title.c_str());
   Sorgente->GetYaxis()->SetRangeUser(-5, 5);
   Sorgente->GetXaxis()->SetTitle("tempo (s)");
-  Sorgente->GetYaxis()->SetTitle("Ampiezza (V)");
+  Sorgente->GetYaxis()->SetTitle("Tensione (V)");
   Sorgente->GetXaxis()->CenterTitle(true);
   Sorgente->GetYaxis()->CenterTitle(true);
   Sorgente->SetLineColor(kViolet - 1);
