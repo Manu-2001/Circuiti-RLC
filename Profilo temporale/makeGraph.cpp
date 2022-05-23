@@ -15,7 +15,7 @@ void makeGraph(int dati = -1) {
 
   TCanvas* Grafico = new TCanvas("Graph", "Graph");
   
-  TLegend* Legenda = new TLegend(.1, .7, .3, .9, "Legend");
+  TLegend* Legenda = new TLegend(.1, .7, .3, .9);
 
   std::string Title{};
 
@@ -33,33 +33,33 @@ void makeGraph(int dati = -1) {
 
   switch (dati) {
     case 0:
-      Title = "Frequenza - 2.5kHz";
+      Title = "Comportamento del filtro a 2.5kHz";
       break;
     case 1:
-      Title = "CrossOver - 4.023kHz";
+      Title = "Comportamento del filtro a 4.023kHz";
       break;
     case 2:
-      Title = "Frequenza - 6.25kHz";
+      Title = "Comportamento del filtro a 6.25kHz";
       break;
   }
 
+  Grafico->SetGrid();
+
   Sorgente->SetTitle(Title.c_str());
   Sorgente->GetYaxis()->SetRangeUser(-5, 5);
-  Sorgente->GetXaxis()->SetTitle("time [s]");
-  Sorgente->GetYaxis()->SetTitle("ddp [V]");
-  Sorgente->SetLineColor(kGreen + 1);
+  Sorgente->GetXaxis()->SetTitle("tempo (s)");
+  Sorgente->GetYaxis()->SetTitle("Ampiezza (V)");
+  Sorgente->GetXaxis()->CenterTitle(true);
+  Sorgente->GetYaxis()->CenterTitle(true);
+  Sorgente->SetLineColor(kViolet - 1);
   Sorgente->SetLineWidth(2);
-  Sorgente->Draw();
+  Sorgente->Draw("ALP");
 
-  Tweeter->GetXaxis()->SetTitle("time [s]");
-  Tweeter->GetYaxis()->SetTitle("ddp [V]");
   Tweeter->SetLineColor(kBlue);
   Tweeter->SetLineWidth(2);
   Tweeter->Draw("SAME");
 
-  Woofer->GetXaxis()->SetTitle("time [s]");
-  Woofer->GetYaxis()->SetTitle("ddp [V]");
-  Woofer->SetLineColor(kOrange);
+  Woofer->SetLineColor(kGreen + 1);
   Woofer->SetLineWidth(2);
   Woofer->Draw("SAME");
 
