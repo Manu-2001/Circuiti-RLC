@@ -177,7 +177,7 @@ void fit() {
   std::cout << "\ntau_l: " << tau_l1 << " +/- " << d_tau_l1
             << "\ntau_c: " << tau_c1 << " +/- " << d_tau_c1 << '\n';
 
-  /*double L = 48.9e-3;
+  double L = 48.9e-3;
   double dL = 0.5e-3;
   double C = 32.0e-9;
   double dC = 0.3e-9;
@@ -186,13 +186,12 @@ void fit() {
   double DQc2 = -L / (4 * M_PI * pow(L * C, 1.5));
 
   double f02 = 1 / (2 * M_PI * sqrt(C * L));
-  double d_f02 = sqrt(pow(DQc2 * C, 2) + pow(DQl2 * L, 2));*/
+  double d_f02 = sqrt(pow(DQc2 * dC, 2) + pow(DQl2 * dL, 2));
 
   std::cout << "\nFrequenza di crossover del grafico 1: " << f0 << " +/- "
             << d_f0 << "\nFrequenza di crossover del grafico 2: " << f01
-            << " +/- " << d_f01 /*<< "\nFrequenza di crossover attesa: " << f02
-            << " +/- " << d_f02*/
-            << '\n';
+            << " +/- " << d_f01 << "\nFrequenza di crossover attesa: " << f02
+            << " +/- " << d_f02 << '\n';
 
   // myFile->Write();
   // myFile->Close();
