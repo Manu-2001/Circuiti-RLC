@@ -66,47 +66,45 @@ void fit() {
             << "ChiSquare/NDOF: "
             << fitSource->GetChisquare() / fitSource->GetNDF() << '\n';
 
-  tweeter->SetTitle("Tweeter");
-  tweeter->SetLineColor(kGreen);
-  tweeter->SetMarkerColor(kBlue);
-  tweeter->SetMarkerSize(0.25);
+  tweeter->SetLineColor(1);
+  tweeter->SetMarkerColor(4);
+  tweeter->SetMarkerSize(0.5);
   tweeter->SetMarkerStyle(kOpenCircle);
-  tweeter->SetFillColor(38);
-  // tweeter->GetXaxis()->SetTitle("Frequenza [Hz]");
-  // tweeter->GetYaxis()->SetTitle("Fase [deg]");
-  fitTweeter->SetLineColor(kRed);
+  fitTweeter->SetLineColor(38);
   fitTweeter->SetLineWidth(2);
 
-  woofer->SetTitle("Woofer");
-  woofer->SetLineColor(kGreen);
-  woofer->SetMarkerColor(kBlue);
-  woofer->SetMarkerSize(0.25);
-  woofer->SetMarkerStyle(kOpenCircle);
-  woofer->SetFillColor(38);
-  // woofer->GetXaxis()->SetTitle("Frequenza [Hz]");
-  // woofer->GetYaxis()->SetTitle("Fase [deg]");
-  fitWoofer->SetLineColor(kRed);
+  woofer->SetLineColor(1);
+  woofer->SetMarkerColor(3);
+  woofer->SetMarkerSize(0.5);
+  woofer->SetMarkerStyle(kOpenSquare);
+  fitWoofer->SetLineColor(8);
   fitWoofer->SetLineWidth(2);
 
-  source->SetTitle("Source");
-  source->SetLineColor(kGreen);
-  source->SetMarkerColor(kBlue);
-  source->SetMarkerSize(0.25);
-  source->SetMarkerStyle(kOpenCircle);
-  source->SetFillColor(38);
-  // woofer->GetXaxis()->SetTitle("Frequenza [Hz]");
-  // woofer->GetYaxis()->SetTitle("Fase [deg]");
-  fitSource->SetLineColor(kRed);
+  source->SetLineColor(1);
+  source->SetMarkerColor(2);
+  source->SetMarkerSize(0.5);
+  source->SetMarkerStyle(kOpenTriangleUp);
+  fitSource->SetLineColor(6);
   fitSource->SetLineWidth(2);
 
   TMultiGraph* mg = new TMultiGraph();
+  mg->SetTitle("Tweeter and Woofer");
   mg->Add(tweeter);
   mg->Add(woofer);
   mg->Add(source);
-  mg->Draw("ALP");
+  mg->Draw("ALPX");
   fitTweeter->Draw("SAME");
   fitWoofer->Draw("SAME");
   fitSource->Draw("SAME");
+
+  TLegend* leg1 = new TLegend(.1, .7, .3, .9);
+  leg1->AddEntry(tweeter, "Tweeter");
+  leg1->AddEntry(fitTweeter, "Tweeter fit");
+  leg1->AddEntry(woofer, "Woofer");
+  leg1->AddEntry(fitWoofer, "Woofer fit");
+  leg1->AddEntry(source, "Source");
+  leg1->AddEntry(fitSource, "Source fit");
+  leg1->Draw("SAME");
 
   double tau_l = fitWoofer->GetParameter(0);
   double tau_c = fitTweeter->GetParameter(0);
@@ -116,9 +114,14 @@ void fit() {
   double d_offset = fitSource->GetParError(0);
   double f0 = 1 / (2 * M_PI * sqrt(tau_c * tau_l));
 
-  std::cout << "tau_l: " << tau_l << " +/- " << d_tau_l << "\ntau_c: " << tau_c
-            << " +/- " << d_tau_c << "\nOffset: " << offset << " +/- "
-            << d_offset << '\n';
+  double DQl = -tau_c / (4 * M_PI * pow(tau_c * tau_l, 1.5));
+  double DQc = -tau_l / (4 * M_PI * pow(tau_c * tau_l, 1.5));
+
+  double d_f0 = sqrt(pow(DQc * d_tau_c, 2) + pow(DQl * d_tau_l, 2));
+
+  std::cout << "\ntau_l: " << tau_l << " +/- " << d_tau_l
+            << "\ntau_c: " << tau_c << " +/- " << d_tau_c
+            << "\nOffset: " << offset << " +/- " << d_offset << '\n';
 
   TCanvas* c1 =
       new TCanvas("c1", "Sum of tweeter and woofer", 200, 10, 1200, 800);
@@ -131,7 +134,7 @@ void fit() {
   sum->Fit("f_sum", "EX0, Q");
   TF1* fitSum = sum->GetFunction("f_sum");
 
-  std::cout << "Sum:\n"
+  std::cout << "\nSum:\n"
             << "ChiSquare/NDOF: " << fitSum->GetChisquare() / fitSum->GetNDF()
             << '\n';
 
@@ -139,31 +142,57 @@ void fit() {
   check_function->SetParameters(tau_c, tau_l);
 
   sum->SetTitle("Sum");
-  sum->SetLineColor(kGreen);
+  sum->SetLineColor(1);
   sum->SetMarkerColor(kBlue);
-  sum->SetMarkerSize(0.25);
+  sum->SetMarkerSize(0.5);
   sum->SetMarkerStyle(kOpenCircle);
-  sum->SetFillColor(38);
-  // sum->GetXaxis()->SetTitle("Frequenza [Hz]");
-  // sum->GetYaxis()->SetTitle("Fase [deg]");
-  fitSum->SetLineColor(kRed);
+  sum->GetXaxis()->SetTitle("Frequenza [Hz]");
+  sum->GetYaxis()->SetTitle("Fase [deg]");
+  fitSum->SetLineColor(2);
   fitSum->SetLineWidth(2);
   check_function->SetLineColor(kOrange);
   check_function->SetLineWidth(2);
 
-  sum->Draw("ALP");
-  f_sum->Draw("SAME");
+  sum->Draw("ALPX");
+  fitSum->Draw("SAME");
   check_function->Draw("SAME");
 
-  std::cout << "tau_l: " << f_sum->GetParameter(1) << " +/- "
-            << f_sum->GetParError(1) << "\ntau_c: " << f_sum->GetParameter(0)
-            << " +/- " << f_sum->GetParError(0) << '\n';
+  TLegend* leg2 = new TLegend(.1, .7, .3, .9);
+  leg2->AddEntry(sum, "Sum acquisition");
+  leg2->AddEntry(fitSum, "Sum fit");
+  leg2->AddEntry(check_function, "Sum of fit functions on tweeter and woofer");
+  leg2->Draw("SAME");
 
-  double f01 =
-      1 / (2 * M_PI * sqrt(f_sum->GetParameter(0) * f_sum->GetParameter(1)));
+  double tau_l1 = fitSum->GetParameter(1);
+  double tau_c1 = fitSum->GetParameter(0);
+  double d_tau_l1 = fitSum->GetParError(1);
+  double d_tau_c1 = fitSum->GetParError(0);
+  double f01 = 1 / (2 * M_PI * sqrt(tau_c1 * tau_l1));
 
-  std::cout << "\nFrequenza di crossover del grafico 1: " << f0
-            << "\nFrequenza di crossover del grafico 2: " << f01 << '\n';
+  double DQl1 = -tau_c1 / (4 * M_PI * pow(tau_c1 * tau_l1, 1.5));
+  double DQc1 = -tau_l1 / (4 * M_PI * pow(tau_c1 * tau_l1, 1.5));
+
+  double d_f01 = sqrt(pow(DQc1 * d_tau_c1, 2) + pow(DQl1 * d_tau_l1, 2));
+
+  std::cout << "\ntau_l: " << tau_l1 << " +/- " << d_tau_l1
+            << "\ntau_c: " << tau_c1 << " +/- " << d_tau_c1 << '\n';
+
+  /*double L = 48.9e-3;
+  double dL = 0.5e-3;
+  double C = 32.0e-9;
+  double dC = 0.3e-9;
+
+  double DQl2 = -C / (4 * M_PI * pow(L * C, 1.5));
+  double DQc2 = -L / (4 * M_PI * pow(L * C, 1.5));
+
+  double f02 = 1 / (2 * M_PI * sqrt(C * L));
+  double d_f02 = sqrt(pow(DQc2 * C, 2) + pow(DQl2 * L, 2));*/
+
+  std::cout << "\nFrequenza di crossover del grafico 1: " << f0 << " +/- "
+            << d_f0 << "\nFrequenza di crossover del grafico 2: " << f01
+            << " +/- " << d_f01 /*<< "\nFrequenza di crossover attesa: " << f02
+            << " +/- " << d_f02*/
+            << '\n';
 
   // myFile->Write();
   // myFile->Close();
