@@ -40,8 +40,7 @@ void fit() {
       new TGraphErrors("tweeter_3sigma.txt", "%lg%lg%lg%lg", "");
   TGraphErrors* woofer =
       new TGraphErrors("woofer_3sigma.txt", "%lg%lg%lg%lg", "");
-  TGraphErrors* source =
-      new TGraphErrors("sorgente.txt", "%lg%lg%lg%lg", "");
+  TGraphErrors* source = new TGraphErrors("sorgente.txt", "%lg%lg%lg%lg", "");
 
   TF1* f_w = new TF1("f_w", sfas_w, 4100, 4500, 1);
   TF1* f_t = new TF1("f_t", sfas_t, 4100, 4500, 1);
@@ -56,15 +55,13 @@ void fit() {
   source->Fit("f_s", "EX0, Q");
   TF1* fitSource = source->GetFunction("f_s");
 
-  std::cout << "Tweeter:\n"
-            << "ChiSquare/NDOF: "
-            << fitTweeter->GetChisquare() / fitTweeter->GetNDF() << '\n'
-            << "Woofer:\n"
-            << "ChiSquare/NDOF: "
-            << fitWoofer->GetChisquare() / fitWoofer->GetNDF() << '\n'
-            << "Source:\n"
-            << "ChiSquare/NDOF: "
-            << fitSource->GetChisquare() / fitSource->GetNDF() << '\n';
+  double const chi_t = fitTweeter->GetChisquare() / fitTweeter->GetNDF();
+  double const chi_w = fitWoofer->GetChisquare() / fitWoofer->GetNDF();
+  double const chi_s = fitSource->GetChisquare() / fitSource->GetNDF();
+
+  std::cout << "Tweeter:\nChiSquare/NDOF: " << chi_t << '\n'
+            << "Woofer:\nChiSquare/NDOF: " << chi_w << '\n'
+            << "Source:\nChiSquare/NDOF: " << chi_s << '\n';
 
   tweeter->SetLineColor(1);
   tweeter->SetMarkerColor(4);
@@ -106,13 +103,13 @@ void fit() {
   leg1->AddEntry(fitSource, "Source fit");
   leg1->Draw("SAME");
 
-  double tau_l = fitWoofer->GetParameter(0);
-  double tau_c = fitTweeter->GetParameter(0);
-  double d_tau_l = fitWoofer->GetParError(0);
-  double d_tau_c = fitTweeter->GetParError(0);
-  double offset = fitSource->GetParameter(0);
-  double d_offset = fitSource->GetParError(0);
-  double f0 = 1 / (2 * M_PI * sqrt(tau_c * tau_l));
+  double const tau_l = fitWoofer->GetParameter(0);
+  double const tau_c = fitTweeter->GetParameter(0);
+  double const d_tau_l = fitWoofer->GetParError(0) * sqrt(chi_t);
+  double const d_tau_c = fitTweeter->GetParError(0) * sqrt(chi_w);
+  double const offset = fitSource->GetParameter(0);
+  double const d_offset = fitSource->GetParError(0) * sqrt(chi_s);
+  double const f0 = 1 / (2 * M_PI * sqrt(tau_c * tau_l));
 
   double DQl = -tau_c / (4 * M_PI * pow(tau_c * tau_l, 1.5));
   double DQc = -tau_l / (4 * M_PI * pow(tau_c * tau_l, 1.5));
@@ -134,9 +131,9 @@ void fit() {
   sum->Fit("f_sum", "EX0, Q");
   TF1* fitSum = sum->GetFunction("f_sum");
 
-  std::cout << "\nSum:\n"
-            << "ChiSquare/NDOF: " << fitSum->GetChisquare() / fitSum->GetNDF()
-            << '\n';
+  double const chi_sum = fitSum->GetChisquare() / fitSum->GetNDF();
+
+  std::cout << "\nSum:\nChiSquare/NDOF: " << chi_sum << '\n';
 
   TF1* check_function = new TF1("check_function", sum_function, 1800, 8000, 2);
   check_function->SetParameters(tau_c, tau_l);
@@ -163,28 +160,30 @@ void fit() {
   leg2->AddEntry(check_function, "Sum of fit functions on tweeter and woofer");
   leg2->Draw("SAME");
 
-  double tau_l1 = fitSum->GetParameter(1);
-  double tau_c1 = fitSum->GetParameter(0);
-  double d_tau_l1 = fitSum->GetParError(1);
-  double d_tau_c1 = fitSum->GetParError(0);
-  double f01 = 1 / (2 * M_PI * sqrt(tau_c1 * tau_l1));
+  double const tau_l1 = fitSum->GetParameter(1);
+  double const tau_c1 = fitSum->GetParameter(0);
+  double const d_tau_l1 = fitSum->GetParError(1) * sqrt(chi_sum);
+  double const d_tau_c1 = fitSum->GetParError(0) * sqrt(chi_sum);
+  double const f01 = 1 / (2 * M_PI * sqrt(tau_c1 * tau_l1));
 
-  double DQl1 = -tau_c1 / (4 * M_PI * pow(tau_c1 * tau_l1, 1.5));
-  double DQc1 = -tau_l1 / (4 * M_PI * pow(tau_c1 * tau_l1, 1.5));
+  double const DQl1 = -tau_c1 / (4 * M_PI * pow(tau_c1 * tau_l1, 1.5));
+  double const DQc1 = -tau_l1 / (4 * M_PI * pow(tau_c1 * tau_l1, 1.5));
 
-  double d_f01 = sqrt(pow(DQc1 * d_tau_c1, 2) + pow(DQl1 * d_tau_l1, 2));
+  double const d_f01 = sqrt(pow(DQc1 * d_tau_c1, 2) + pow(DQl1 * d_tau_l1, 2));
 
   std::cout << "\ntau_l: " << tau_l1 << " +/- " << d_tau_l1
             << "\ntau_c: " << tau_c1 << " +/- " << d_tau_c1 << '\n';
 
-  double L = 0.0489;
-  double dL = 0.0005;
-  double C = 32.0E-9;
-  double dC = 0.3E-9;
-  double DQl2 = -C / (4 * M_PI * pow(L * C, 1.5));
-  double DQc2 = -L / (4 * M_PI * pow(L * C, 1.5));
-  double f02 = 1 / (2 * M_PI * sqrt(L * C));
-  double d_f02 = sqrt(pow(DQc2 * dC, 2) + pow(DQl2 * dL, 2));
+  double const L = 0.0489;
+  double const dL = 0.0005;
+  double const C = 32.0e-9;
+  double const dC = 0.3e-9;
+
+  double const DQl2 = -C / (4 * M_PI * pow(L * C, 1.5));
+  double const DQc2 = -L / (4 * M_PI * pow(L * C, 1.5));
+
+  double const f02 = 1 / (2 * M_PI * sqrt(C * L));
+  double const d_f02 = sqrt(pow(DQc2 * dC, 2) + pow(DQl2 * dL, 2));
 
   std::cout << "\nFrequenza di crossover del grafico 1: " << f0 << " +/- "
             << d_f0 << "\nFrequenza di crossover del grafico 2: " << f01
