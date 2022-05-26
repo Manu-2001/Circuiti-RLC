@@ -2,7 +2,7 @@
 
 double eval(double x) { return (x > 0.) ? x : -x; }
 
-bool printData(misura const& X, misura const& Y, std::string const& u) {
+bool printData(misura const &X, misura const &Y, std::string const &u) {
   if ((Y.p + Y.d >= X.p - X.d && Y.p - Y.d <= X.p + X.d) ||
       (Y.p + Y.d <= X.p - X.d && Y.p - Y.d >= X.p + X.d)) {
     std::cout << "\033[32m" << X.p << " ± " << X.d << ' ' << u << "\033[0m";
@@ -16,7 +16,7 @@ bool printData(misura const& X, misura const& Y, std::string const& u) {
   return false;
 }
 
-bool printData(misura const& X, double Y, std::string const& u) {
+bool printData(misura const &X, double Y, std::string const &u) {
   if (Y >= X.p - X.d && Y <= X.p + X.d) {
     std::cout << "\033[32m" << X.p << " ± " << X.d << ' ' << u << "\033[0m";
 
@@ -29,12 +29,12 @@ bool printData(misura const& X, double Y, std::string const& u) {
   return false;
 }
 
-void printData(misura const& X, std::string const& u) {
+void printData(misura const &X, std::string const &u) {
   std::cout << X.p << " ± " << X.d << ' ' << u;
 }
 
-void Statistic(double& X, double& Y, double& XStd, double& YStd,
-               std::string const& fileName) {
+void Statistic(double &X, double &Y, double &XStd, double &YStd,
+               std::string const &fileName) {
   std::ifstream in;
 
   double x{}, y{};
@@ -86,12 +86,12 @@ void Statistic(double& X, double& Y, double& XStd, double& YStd,
   YStd = sqrt(dy2 / (N - 1));
 }
 
-int IntersParab(misura& X1, misura& X2, misura& Y1, misura& Y2, TF1* const& f,
-                TF1* const& g, bool quad) {
-  double const* fp = f->GetParameters();
-  double const* gp = g->GetParameters();
-  double const* dfp = f->GetParErrors();
-  double const* dgp = g->GetParErrors();
+int IntersParab(misura &X1, misura &X2, misura &Y1, misura &Y2, TF1 *const &f,
+                TF1 *const &g, bool quad) {
+  double const *fp = f->GetParameters();
+  double const *gp = g->GetParameters();
+  double const *dfp = f->GetParErrors();
+  double const *dgp = g->GetParErrors();
 
   double const a = fp[0] - gp[0];
   double const b = fp[1] - gp[1];
@@ -104,6 +104,8 @@ int IntersParab(misura& X1, misura& X2, misura& Y1, misura& Y2, TF1* const& f,
   double gp1{};
   double gp2{};
 
+  double const chif = sqrt(f->GetChisquare() / f->GetNDF());
+  double const chig = sqrt(g->GetChisquare() / g->GetNDF());
   double const delta = b * b - 4 * a * c;
 
   if (delta < 0. || a == 0.) {
@@ -124,12 +126,12 @@ int IntersParab(misura& X1, misura& X2, misura& Y1, misura& Y2, TF1* const& f,
 
   // errore in quadratura o lineare per X1
   if (quad) {
-    X1.d = sqrt(pow(fp0 * dfp[0], 2) + pow(fp1 * dfp[1], 2) +
-                pow(fp2 * dfp[2], 2) + pow(gp0 * dgp[0], 2) +
-                pow(gp1 * dgp[1], 2) + pow(gp2 * dgp[2], 2));
+    X1.d = sqrt(pow(fp0 * dfp[0] * chif, 2) + pow(fp1 * dfp[1] * chif, 2) +
+                pow(fp2 * dfp[2] * chif, 2) + pow(gp0 * dgp[0] * chig, 2) +
+                pow(gp1 * dgp[1] * chig, 2) + pow(gp2 * dgp[2] * chig, 2));
   } else {
-    X1.d = fp0 * dfp[0] + fp1 * dfp[1] + fp2 * dfp[2] + gp0 * dgp[0] +
-           gp1 * dgp[1] + gp2 * dgp[2];
+    X1.d = (fp0 * dfp[0] + fp1 * dfp[1] + fp2 * dfp[2]) * chif +
+           (gp0 * dgp[0] + gp1 * dgp[1] + gp2 * dgp[2]) * chig;
   }
 
   // calcolo delle derivate per X2
@@ -140,12 +142,12 @@ int IntersParab(misura& X1, misura& X2, misura& Y1, misura& Y2, TF1* const& f,
 
   // errore in quadratura o lineare per X2
   if (quad) {
-    X2.d = sqrt(pow(fp0 * dfp[0], 2) + pow(fp1 * dfp[1], 2) +
-                pow(fp2 * dfp[2], 2) + pow(gp0 * dgp[0], 2) +
-                pow(gp1 * dgp[1], 2) + pow(gp2 * dgp[2], 2));
+    X2.d = sqrt(pow(fp0 * dfp[0] * chif, 2) + pow(fp1 * dfp[1] * chif, 2) +
+                pow(fp2 * dfp[2] * chif, 2) + pow(gp0 * dgp[0] * chig, 2) +
+                pow(gp1 * dgp[1] * chig, 2) + pow(gp2 * dgp[2] * chig, 2));
   } else {
-    X2.d = fp0 * dfp[0] + fp1 * dfp[1] + fp2 * dfp[2] + gp0 * dgp[0] +
-           gp1 * dgp[1] + gp2 * dgp[2];
+    X2.d = (fp0 * dfp[0] + fp1 * dfp[1] + fp2 * dfp[2]) * chif +
+           (gp0 * dgp[0] + gp1 * dgp[1] + gp2 * dgp[2]) * chig;
   }
 
   // Intersezioni Y
@@ -158,11 +160,11 @@ int IntersParab(misura& X1, misura& X2, misura& Y1, misura& Y2, TF1* const& f,
   return 0;
 }
 
-int IntersRette(misura& X, misura& Y, TF1* const& f, TF1* const& g, bool quad) {
-  double const* fp = f->GetParameters();
-  double const* gp = g->GetParameters();
-  double const* dfp = f->GetParErrors();
-  double const* dgp = g->GetParErrors();
+int IntersRette(misura &X, misura &Y, TF1 *const &f, TF1 *const &g, bool quad) {
+  double const *fp = f->GetParameters();
+  double const *gp = g->GetParameters();
+  double const *dfp = f->GetParErrors();
+  double const *dgp = g->GetParErrors();
 
   double const m = fp[0] - gp[0];
   double const q = fp[1] - gp[1];
