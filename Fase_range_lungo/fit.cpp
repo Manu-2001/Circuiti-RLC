@@ -35,6 +35,7 @@ void fit() {
   // TFile* myFile = new TFile("fitdata.root", "RECREATE");
 
   TCanvas* c = new TCanvas("c", "Tweeter and Woofer", 200, 10, 1200, 800);
+  c->SetGrid();
 
   TGraphErrors* tweeter =
       new TGraphErrors("tweeter_3sigma.txt", "%lg%lg%lg%lg", "");
@@ -59,6 +60,19 @@ void fit() {
   double const chi_t = fitTweeter->GetChisquare() / fitTweeter->GetNDF();
   double const chi_w = fitWoofer->GetChisquare() / fitWoofer->GetNDF();
   double const chi_s = fitSource->GetChisquare() / fitSource->GetNDF();
+  double const tau_l = fitWoofer->GetParameter(0);
+  double const tau_c = fitTweeter->GetParameter(0);
+  double const d_tau_l = fitWoofer->GetParError(0) * sqrt(chi_t);
+  double const d_tau_c = fitTweeter->GetParError(0) * sqrt(chi_w);
+  double const offset = fitSource->GetParameter(0);
+  double const d_offset = fitSource->GetParError(0) * sqrt(chi_s);
+  double const f0 = 1 / (2 * M_PI * sqrt(tau_c * tau_l));
+  double DQl = -tau_c / (4 * M_PI * pow(tau_c * tau_l, 1.5));
+  double DQc = -tau_l / (4 * M_PI * pow(tau_c * tau_l, 1.5));
+  double d_f0 = sqrt(pow(DQc * d_tau_c, 2) + pow(DQl * d_tau_l, 2));
+
+  TF1* result_1 = new TF1("result_1", sum_function, 1800, 8000, 2);
+  result_1->SetParameters(tau_c, tau_l);
 
   std::cout << "Tweeter:\nChiSquare/NDOF: " << chi_t << '\n'
             << "Woofer:\nChiSquare/NDOF: " << chi_w << '\n'
@@ -78,44 +92,32 @@ void fit() {
   fitWoofer->SetLineColor(8);
   fitWoofer->SetLineWidth(2);
 
-  source->SetLineColor(1);
-  source->SetMarkerColor(2);
-  source->SetMarkerSize(0.5);
-  source->SetMarkerStyle(kOpenTriangleUp);
   fitSource->SetLineColor(6);
   fitSource->SetLineWidth(2);
 
+  result_1->SetLineColor(2);
+  result_1->SetLineWidth(2);
+
   TMultiGraph* mg = new TMultiGraph();
-  mg->SetTitle("Tweeter and Woofer");
+  mg->SetTitle("Sfasamento - Dati elaborati");
   mg->Add(tweeter);
   mg->Add(woofer);
-  mg->Add(source);
-  mg->Draw("ALPX");
+  mg->GetXaxis()->SetTitle("Frequenza [Hz]");
+  mg->GetYaxis()->SetTitle("Fase [gradi]");
+  mg->Draw("ACPX");
   fitTweeter->Draw("SAME");
   fitWoofer->Draw("SAME");
   fitSource->Draw("SAME");
+  result_1->Draw("SAME");
 
   TLegend* leg1 = new TLegend(.1, .7, .3, .9);
   leg1->AddEntry(tweeter, "Tweeter");
-  leg1->AddEntry(fitTweeter, "Tweeter fit");
+  leg1->AddEntry(fitTweeter, "Fit Tweeter");
   leg1->AddEntry(woofer, "Woofer");
-  leg1->AddEntry(fitWoofer, "Woofer fit");
-  leg1->AddEntry(source, "Source");
-  leg1->AddEntry(fitSource, "Source fit");
+  leg1->AddEntry(fitWoofer, "Fit Woofer");
+  leg1->AddEntry(fitSource, "Sorgente");
+  leg1->AddEntry(result_1, "Somma fit");
   leg1->Draw("SAME");
-
-  double const tau_l = fitWoofer->GetParameter(0);
-  double const tau_c = fitTweeter->GetParameter(0);
-  double const d_tau_l = fitWoofer->GetParError(0) * sqrt(chi_t);
-  double const d_tau_c = fitTweeter->GetParError(0) * sqrt(chi_w);
-  double const offset = fitSource->GetParameter(0);
-  double const d_offset = fitSource->GetParError(0) * sqrt(chi_s);
-  double const f0 = 1 / (2 * M_PI * sqrt(tau_c * tau_l));
-
-  double DQl = -tau_c / (4 * M_PI * pow(tau_c * tau_l, 1.5));
-  double DQc = -tau_l / (4 * M_PI * pow(tau_c * tau_l, 1.5));
-
-  double d_f0 = sqrt(pow(DQc * d_tau_c, 2) + pow(DQl * d_tau_l, 2));
 
   std::cout << "\ntau_l: " << tau_l << " +/- " << d_tau_l
             << "\ntau_c: " << tau_c << " +/- " << d_tau_c
@@ -123,6 +125,7 @@ void fit() {
 
   TCanvas* c1 =
       new TCanvas("c1", "Sum of tweeter and woofer", 200, 10, 1200, 800);
+  c1->SetGrid();
 
   TGraphErrors* sum =
       new TGraphErrors("somma_woofer+tweeter_3sigma.txt", "%lg%lg%lg%lg", "");
@@ -136,29 +139,22 @@ void fit() {
 
   std::cout << "\nSum:\nChiSquare/NDOF: " << chi_sum << '\n';
 
-  TF1* check_function = new TF1("check_function", sum_function, 1800, 8000, 2);
-  check_function->SetParameters(tau_c, tau_l);
-
-  sum->SetTitle("Sum");
+  sum->SetTitle("Acquisizione somma degli sfasasamenti");
   sum->SetLineColor(1);
   sum->SetMarkerColor(kBlue);
   sum->SetMarkerSize(0.5);
   sum->SetMarkerStyle(kOpenCircle);
   sum->GetXaxis()->SetTitle("Frequenza [Hz]");
-  sum->GetYaxis()->SetTitle("Fase [deg]");
+  sum->GetYaxis()->SetTitle("Fase [gradi]");
   fitSum->SetLineColor(2);
   fitSum->SetLineWidth(2);
-  check_function->SetLineColor(kOrange);
-  check_function->SetLineWidth(2);
 
-  sum->Draw("ALPX");
+  sum->Draw("ACPX");
   fitSum->Draw("SAME");
-  check_function->Draw("SAME");
 
   TLegend* leg2 = new TLegend(.1, .7, .3, .9);
-  leg2->AddEntry(sum, "Sum acquisition");
-  leg2->AddEntry(fitSum, "Sum fit");
-  leg2->AddEntry(check_function, "Sum of fit functions on tweeter and woofer");
+  leg2->AddEntry(sum, "Somma - Dati");
+  leg2->AddEntry(fitSum, "Fit Somma");
   leg2->Draw("SAME");
 
   double const tau_l1 = fitSum->GetParameter(1);
