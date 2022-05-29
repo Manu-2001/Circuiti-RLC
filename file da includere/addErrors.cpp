@@ -3,6 +3,13 @@
 #include <iostream>
 #include <string>
 
+// il file da aprire deve avere per forza due colonne di dati e l'ultima riga
+// deve essere  un 'a capo', no dati.
+//...                          |  ...
+//14949.962383	1.029530       |  14949.976304	1.029512     
+//14949.976304	1.029512       |  15000.082348	1.026365
+//15000.082348	1.026365    no |                          ok
+
 int main() {
   double x{};
   double y{};
