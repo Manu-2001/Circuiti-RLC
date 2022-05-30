@@ -41,7 +41,7 @@ void dati_attesi() {
   double const tau_l2 = L / RL;
   double const tau_c2 = RC * C;
 
-  TCanvas* attes = new TCanvas("attes", "Dati attesi", 200, 10, 1200, 800);
+  TCanvas* attes = new TCanvas("attes", "Dati attesi", 200, 10, 600, 400);
   attes->SetGrid();
 
   TGraphErrors* tweeter =
@@ -107,5 +107,7 @@ void dati_attesi() {
   double const f02 = 1 / (2 * M_PI * sqrt(C * L));
 
   std::cout << "\nFrequenza di crossover del grafico: " << f01
-            << "\nFrequenza di crossover attesa: " << f02 << '\n';
+            << "\nFrequenza di crossover attesa: " << f02
+            << "\ntau_l: " << tau_l2
+            << "\ntau_c: " << tau_c2 << '\n';
 }
